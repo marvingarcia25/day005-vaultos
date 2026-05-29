@@ -54,4 +54,6 @@ fi
 
 php artisan route:cache 2>/dev/null || true
 
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
