@@ -30,7 +30,7 @@
           <div class="revenue-block">
             <div class="rev-item">
               <span class="rev-label">THIS MONTH</span>
-              <span class="rev-value" style="color:var(--yellow)">${{ fmt(stats.monthly_revenue) }}</span>
+              <span class="rev-value" style="color:var(--primary)">${{ fmt(stats.monthly_revenue) }}</span>
             </div>
             <div class="rev-item">
               <span class="rev-label">THIS YEAR</span>
@@ -91,9 +91,9 @@ const reservedPct  = computed(() => stats.value.total_units > 0 ? (stats.value.r
 const availablePct = computed(() => stats.value.total_units > 0 ? (stats.value.available_units / stats.value.total_units * 100).toFixed(1) : 0);
 
 const primaryStats = computed(() => [
-  { label: 'OCCUPANCY RATE',   value: stats.value.occupancy_rate + '%', color: 'var(--yellow)' },
+  { label: 'OCCUPANCY RATE',   value: stats.value.occupancy_rate + '%', color: 'var(--primary)' },
   { label: 'TOTAL UNITS',      value: stats.value.total_units },
-  { label: 'ACTIVE TENANTS',   value: stats.value.active_tenants, color: 'var(--blue)' },
+  { label: 'ACTIVE TENANTS',   value: stats.value.active_tenants, color: 'var(--primary)' },
   { label: 'AVAILABLE NOW',    value: stats.value.available_units, color: 'var(--green)' },
 ]);
 
@@ -130,8 +130,9 @@ onMounted(async () => {
 .stat-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 2px;
+  border-radius: 8px;
   padding: 1rem 1.1rem;
+  box-shadow: var(--shadow-sm);
   animation: fadeUp 0.3s ease both;
 }
 
@@ -143,10 +144,11 @@ onMounted(async () => {
 }
 
 .stat-value {
-  font-family: var(--display);
-  font-size: 2.4rem;
+  font-family: var(--sans);
+  font-size: 2.2rem;
+  font-weight: 700;
   line-height: 1;
-  letter-spacing: 0.04em;
+  letter-spacing: -0.02em;
 }
 
 .stat-sub { font-size: 0.6rem; color: var(--text-dim); margin-top: 0.3rem; }
@@ -164,7 +166,7 @@ onMounted(async () => {
 .occ-bar-wrap {
   display: flex;
   height: 8px;
-  border-radius: 2px;
+  border-radius: 4px;
   overflow: hidden;
   gap: 1px;
   margin-bottom: 0.85rem;
@@ -201,7 +203,7 @@ onMounted(async () => {
 .rev-item { display: flex; flex-direction: column; gap: 0.25rem; }
 
 .rev-label { font-size: 0.56rem; letter-spacing: 0.18em; color: var(--text-dim); }
-.rev-value { font-family: var(--display); font-size: 1.6rem; letter-spacing: 0.04em; }
+.rev-value { font-family: var(--sans); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
 
 /* payment rows */
 .payment-row {

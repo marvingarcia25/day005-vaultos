@@ -52,7 +52,7 @@
           {{ t.lease_end || '—' }}
         </div>
         <div><span class="badge" :class="'badge-' + t.status">{{ t.status }}</span></div>
-        <div class="cell-rate" style="color:var(--yellow)">
+        <div class="cell-rate" style="color:var(--primary)">
           {{ t.unit ? '$' + fmt(t.unit.monthly_rate) : '—' }}
         </div>
         <div><button class="table-btn" @click.stop="openTenant(t)">VIEW</button></div>
@@ -74,7 +74,7 @@
           <div class="detail-grid">
             <div class="spec-item"><span class="spec-label">PHONE</span><span class="spec-val">{{ selectedTenant.phone }}</span></div>
             <div class="spec-item"><span class="spec-label">STATUS</span><span class="spec-val"><span class="badge" :class="'badge-' + selectedTenant.status">{{ selectedTenant.status }}</span></span></div>
-            <div class="spec-item"><span class="spec-label">UNIT</span><span class="spec-val" style="color:var(--yellow)">{{ selectedTenant.unit?.unit_number || '—' }}</span></div>
+            <div class="spec-item"><span class="spec-label">UNIT</span><span class="spec-val" style="color:var(--primary)">{{ selectedTenant.unit?.unit_number || '—' }}</span></div>
             <div class="spec-item"><span class="spec-label">LEASE START</span><span class="spec-val">{{ selectedTenant.lease_start || '—' }}</span></div>
             <div class="spec-item"><span class="spec-label">LEASE END</span><span class="spec-val" :style="{ color: leaseColor(selectedTenant.lease_end) }">{{ selectedTenant.lease_end || '—' }}</span></div>
             <div class="spec-item"><span class="spec-label">EMERGENCY</span><span class="spec-val">{{ selectedTenant.emergency_contact || '—' }}</span></div>
@@ -347,15 +347,15 @@ onMounted(async () => {
   background: var(--surface);
   border: 1px solid var(--border);
   color: var(--text);
-  font-family: var(--mono);
-  font-size: 0.8rem;
+  font-family: var(--sans);
+  font-size: 0.875rem;
   padding: 0.55rem 0.75rem 0.55rem 2.25rem;
-  border-radius: 2px;
+  border-radius: 6px;
   outline: none;
-  transition: border-color 0.1s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.search-input:focus { border-color: var(--yellow); }
+.search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(43,141,200,0.12); }
 .search-input::placeholder { color: var(--text-dim); }
 
 .toolbar-right { display: flex; align-items: center; gap: 0.75rem; }
@@ -363,19 +363,20 @@ onMounted(async () => {
 .filter-group { display: flex; gap: 4px; }
 
 .filter-btn {
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.14em;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 500;
   padding: 0.35rem 0.75rem;
   background: var(--surface);
   border: 1px solid var(--border);
   color: var(--text-dim);
   cursor: pointer;
-  border-radius: 2px;
+  border-radius: 6px;
   transition: all 0.1s;
 }
 
-.filter-btn.active { background: var(--yellow-dim); border-color: var(--yellow); color: var(--yellow); }
+.filter-btn:hover  { border-color: var(--primary); color: var(--primary); }
+.filter-btn.active { background: var(--primary-dim); border-color: var(--primary); color: var(--primary); font-weight: 600; }
 
 /* table */
 .tenant-table { overflow: hidden; }
@@ -404,7 +405,8 @@ onMounted(async () => {
 
 .table-row:last-child { border-bottom: none; }
 .table-row:hover  { background: var(--surface-2); }
-.table-row.active { background: var(--yellow-dim); }
+.table-row:hover  { background: var(--surface-2); }
+.table-row.active { background: var(--primary-dim); }
 
 .cell-name { font-size: 0.8rem; font-weight: 500; }
 .cell-email { font-size: 0.62rem; color: var(--text-dim); margin-top: 0.15rem; }
@@ -413,7 +415,7 @@ onMounted(async () => {
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.1em;
-  color: var(--yellow);
+  color: var(--primary);
 }
 
 .cell-empty { color: var(--text-dim); }
@@ -421,18 +423,18 @@ onMounted(async () => {
 .cell-rate  { font-size: 0.78rem; font-weight: 700; }
 
 .table-btn {
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.14em;
-  padding: 0.35rem 0.6rem;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 0.35rem 0.65rem;
   background: transparent;
   border: 1px solid var(--border);
   color: var(--text-dim);
   cursor: pointer;
-  border-radius: 2px;
+  border-radius: 6px;
   transition: all 0.1s;
 }
-.table-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+.table-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-dim); }
 
 /* detail modal */
 .detail-grid {
@@ -449,7 +451,7 @@ onMounted(async () => {
 .payments-list {
   background: var(--surface-2);
   border: 1px solid var(--border);
-  border-radius: 2px;
+  border-radius: 6px;
   margin-bottom: 0.5rem;
   max-height: 160px;
   overflow-y: auto;
@@ -484,8 +486,8 @@ onMounted(async () => {
   margin-top: 0.5rem;
   padding: 0.5rem 0.75rem;
   background: var(--red-dim);
-  border: 1px solid rgba(255,59,48,0.2);
-  border-radius: 2px;
+  border: 1px solid rgba(229,62,62,0.2);
+  border-radius: 6px;
 }
 
 .empty-state {

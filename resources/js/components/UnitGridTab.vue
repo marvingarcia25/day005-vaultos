@@ -75,7 +75,7 @@
             </div>
             <div class="spec-item">
               <span class="spec-label">RATE</span>
-              <span class="spec-val" style="color:var(--yellow)">${{ fmt(selectedUnit.monthly_rate) }}/mo</span>
+              <span class="spec-val" style="color:var(--primary)">${{ fmt(selectedUnit.monthly_rate) }}/mo</span>
             </div>
           </div>
 
@@ -217,27 +217,28 @@ onMounted(async () => {
 .filter-group { display: flex; gap: 4px; }
 
 .filter-btn {
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.14em;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 500;
   padding: 0.35rem 0.75rem;
   background: var(--surface-2);
   border: 1px solid var(--border);
   color: var(--text-dim);
   cursor: pointer;
-  border-radius: 2px;
+  border-radius: 6px;
   transition: all 0.1s;
 }
 
-.filter-btn:hover  { border-color: var(--yellow); color: var(--text); }
-.filter-btn.active { background: var(--yellow-dim); border-color: var(--yellow); color: var(--yellow); }
+.filter-btn:hover  { border-color: var(--primary); color: var(--primary); }
+.filter-btn.active { background: var(--primary-dim); border-color: var(--primary); color: var(--primary); font-weight: 600; }
 
 /* ── FLOOR PLAN ────────────────────────── */
 .floor-plan {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 2px;
+  border-radius: 8px;
   padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .plan-row {
@@ -250,10 +251,11 @@ onMounted(async () => {
 .plan-row:last-of-type { margin-bottom: 0; }
 
 .row-label {
-  font-family: var(--display);
-  font-size: 1.5rem;
-  letter-spacing: 0.1em;
-  color: var(--text-dim);
+  font-family: var(--sans);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
   width: 24px;
   flex-shrink: 0;
   padding-top: 0.3rem;
@@ -264,7 +266,7 @@ onMounted(async () => {
 .unit-cell {
   height: 64px;
   border: 2px solid transparent;
-  border-radius: 2px;
+  border-radius: 6px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -294,12 +296,12 @@ onMounted(async () => {
 .unit-cell.status-occupied:hover   { background: rgba(255,59,48,0.2);   border-color: var(--red);    box-shadow: 0 0 12px rgba(255,59,48,0.2); }
 .unit-cell.status-reserved:hover   { background: rgba(255,149,0,0.2);   border-color: var(--orange); box-shadow: 0 0 12px rgba(255,149,0,0.2); }
 
-.unit-cell.selected { box-shadow: 0 0 0 2px var(--yellow), 0 0 20px var(--yellow-glow); border-color: var(--yellow) !important; z-index: 2; }
+.unit-cell.selected { box-shadow: 0 0 0 2px var(--primary), 0 0 12px rgba(43,141,200,0.25); border-color: var(--primary) !important; z-index: 2; }
 
 .unit-cell.dimmed { opacity: 0.2; }
 
 .cell-number {
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -340,10 +342,11 @@ onMounted(async () => {
 .drawer-id { display: flex; align-items: center; gap: 0.75rem; }
 
 .drawer-number {
-  font-family: var(--display);
-  font-size: 1.8rem;
-  letter-spacing: 0.08em;
-  color: var(--yellow);
+  font-family: var(--sans);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--primary);
 }
 
 .drawer-body { padding: 1.25rem; }
@@ -376,17 +379,17 @@ onMounted(async () => {
 .status-btns { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
 
 .status-btn {
-  font-family: var(--mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 500;
   padding: 0.5rem 1rem;
   border: 1px solid var(--border);
   background: var(--surface-2);
   color: var(--text-dim);
   cursor: pointer;
-  border-radius: 2px;
+  border-radius: 6px;
   transition: all 0.1s;
-  text-transform: uppercase;
+  text-transform: capitalize;
 }
 
 .status-btn:disabled { opacity: 0.4; cursor: not-allowed; }

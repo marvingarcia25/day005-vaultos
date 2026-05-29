@@ -46,7 +46,7 @@ aws ecr create-repository \
 
 ```bash
 aws ssm put-parameter --name /vaultos/app-key     --type SecureString --value "base64:YOUR_APP_KEY"
-aws ssm put-parameter --name /vaultos/db-password --type SecureString --value "VaultOS_Str0ng!"
+aws ssm put-parameter --name /vaultos/db-password --type SecureString --value "YOUR_STRONG_DB_PASSWORD"
 ```
 
 ### 3. Create the ECS cluster
