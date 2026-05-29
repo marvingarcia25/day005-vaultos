@@ -28,6 +28,7 @@ RUN composer install \
     --optimize-autoloader \
     --no-interaction \
     --no-progress \
+    --no-scripts \
     --prefer-dist
 
 
