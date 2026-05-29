@@ -38,7 +38,7 @@ RUN composer install \
 # Microsoft ODBC driver installation requires a Debian/Ubuntu base; Alpine is
 # not supported by the official Microsoft packages.microsoft.com repository.
 # =============================================================================
-FROM php:8.2-fpm-bullseye AS final
+FROM php:8.4-fpm-bullseye AS final
 
 WORKDIR /var/www/html
 

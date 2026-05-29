@@ -23,7 +23,8 @@
         { "name": "DB_PORT",       "value": "1433" },
         { "name": "DB_DATABASE",   "value": "vaultos" },
         { "name": "DB_USERNAME",   "value": "sa" },
-        { "name": "DB_PASSWORD",   "value": "PLACEHOLDER_DB_PASSWORD" }
+        { "name": "DB_PASSWORD",   "value": "PLACEHOLDER_DB_PASSWORD" },
+        { "name": "DB_TRUST_SERVER_CERTIFICATE", "value": "true" }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",

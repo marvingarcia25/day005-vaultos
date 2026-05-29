@@ -9,7 +9,7 @@ services:
       APP_NAME: VaultOS
       APP_ENV: local
       APP_DEBUG: "true"
-      APP_KEY: base64:REPLACEME
+      APP_KEY: "base64:jCHVnjHG3jJ5v2sq/5WATr+wUS46CNXW89Sc1BCgKKA="
       APP_URL: http://localhost:8080
       DB_CONNECTION: sqlsrv
       DB_HOST: db
@@ -17,6 +17,7 @@ services:
       DB_DATABASE: vaultos
       DB_USERNAME: sa
       DB_PASSWORD: "VaultOS_Str0ng!"
+      DB_TRUST_SERVER_CERTIFICATE: "true"
     depends_on:
       db:
         condition: service_healthy

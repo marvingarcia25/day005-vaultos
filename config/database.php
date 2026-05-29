@@ -5,16 +5,17 @@ return [
 
     'connections' => [
         'sqlsrv' => [
-            'driver'         => 'sqlsrv',
-            'url'            => env('DATABASE_URL'),
-            'host'           => env('DB_HOST', 'db'),
-            'port'           => env('DB_PORT', '1433'),
-            'database'       => env('DB_DATABASE', 'vaultos'),
-            'username'       => env('DB_USERNAME', 'sa'),
-            'password'       => env('DB_PASSWORD', ''),
-            'charset'        => 'utf8',
-            'prefix'         => '',
-            'prefix_indexes' => true,
+            'driver'                   => 'sqlsrv',
+            'url'                      => env('DATABASE_URL'),
+            'host'                     => env('DB_HOST', 'db'),
+            'port'                     => env('DB_PORT', '1433'),
+            'database'                 => env('DB_DATABASE', 'vaultos'),
+            'username'                 => env('DB_USERNAME', 'sa'),
+            'password'                 => env('DB_PASSWORD', ''),
+            'charset'                  => 'utf8',
+            'prefix'                   => '',
+            'prefix_indexes'           => true,
+            'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', false),
         ],
     ],
 
