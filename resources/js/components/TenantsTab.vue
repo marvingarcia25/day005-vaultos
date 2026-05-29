@@ -51,11 +51,11 @@
         <div class="cell-lease" :style="{ color: leaseColor(t.lease_end) }">
           {{ t.lease_end || '—' }}
         </div>
-        <div><span class="badge" :class="'badge-' + t.status">{{ t.status }}</span></div>
+        <div class="cell-status"><span class="badge" :class="'badge-' + t.status">{{ t.status }}</span></div>
         <div class="cell-rate" style="color:var(--primary)">
           {{ t.unit ? '$' + fmt(t.unit.monthly_rate) : '—' }}
         </div>
-        <div><button class="table-btn" @click.stop="openTenant(t)">VIEW</button></div>
+        <div class="cell-action"><button class="table-btn" @click.stop="openTenant(t)">VIEW</button></div>
       </div>
     </div>
 
@@ -496,5 +496,56 @@ onMounted(async () => {
   color: var(--text-dim);
   font-size: 0.72rem;
   letter-spacing: 0.1em;
+}
+
+@media (max-width: 768px) {
+  .tenants-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+  }
+
+  .search-wrap { max-width: 100%; }
+
+  .toolbar-right {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* Hide table header; rows become cards */
+  .table-head { display: none; }
+
+  .table-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem 0.75rem;
+    padding: 0.85rem 1rem;
+  }
+
+  .cell-tenant  { flex: 1 1 100%; }
+  .cell-unit    { flex: 0 0 auto; font-size: 0.68rem; }
+  .cell-lease   { display: none; }
+  .cell-status  { flex: 0 0 auto; margin-left: auto; }
+  .cell-rate    { flex: 0 0 auto; font-size: 0.72rem; font-weight: 700; color: var(--primary); }
+  .cell-action  { display: none; }
+
+  /* Payment log rows in modal */
+  .pay-row {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 0.15rem 0.5rem;
+    padding: 0.65rem 0.75rem;
+  }
+
+  .pay-period     { grid-column: 1; grid-row: 1; }
+  .pay-row > div:nth-child(2) { grid-column: 2; grid-row: 1; }
+  .pay-date-cell  { grid-column: 1; grid-row: 2; }
+  .pay-amt        { grid-column: 2; grid-row: 2; }
+
+  .detail-grid { grid-template-columns: repeat(2, 1fr); }
 }
 </style>

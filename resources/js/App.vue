@@ -28,6 +28,7 @@
     <main class="main-area">
       <header class="topbar">
         <div class="topbar-left">
+          <div class="topbar-brand">Vault<em>OS</em></div>
           <div class="topbar-title">{{ currentTab.label }}</div>
         </div>
         <div class="topbar-right">
@@ -42,6 +43,20 @@
       </div>
     </main>
   </div>
+
+  <!-- Mobile bottom nav (phones only) -->
+  <nav class="mobile-nav">
+    <button
+      v-for="tab in tabs"
+      :key="tab.id"
+      class="mobile-nav-item"
+      :class="{ active: activeTab === tab.id }"
+      @click="activeTab = tab.id"
+    >
+      <span class="mobile-nav-icon" v-html="tab.icon"></span>
+      <span class="mobile-nav-label">{{ tab.label }}</span>
+    </button>
+  </nav>
 </template>
 
 <script setup>
@@ -433,6 +448,83 @@ html, body {
   gap: 0.5rem;
   background: var(--surface-2);
   border-radius: 0 0 12px 12px;
+}
+
+/* ── MOBILE NAV ──────────────────────────── */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 60px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.mobile-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-family: var(--sans);
+  cursor: pointer;
+  padding: 0.5rem 0;
+  transition: color 0.15s;
+}
+
+.mobile-nav-item.active { color: var(--primary); }
+
+.mobile-nav-icon { display: flex; align-items: center; }
+.mobile-nav-icon svg { width: 20px; height: 20px; }
+
+.mobile-nav-label { font-size: 0.6rem; font-weight: 500; letter-spacing: 0.04em; }
+
+.topbar-brand { display: none; }
+
+/* ── RESPONSIVE ──────────────────────────── */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+
+  .mobile-nav { display: flex; }
+
+  .topbar { padding: 0 1rem; }
+
+  .topbar-brand {
+    display: block;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-right: 0.5rem;
+  }
+  .topbar-brand em { font-style: normal; color: var(--primary); }
+
+  .topbar-title {
+    font-size: 0.875rem;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  .tab-content {
+    padding: 1rem;
+    padding-bottom: calc(1rem + 60px + env(safe-area-inset-bottom));
+  }
+
+  .modal-overlay { align-items: flex-end; }
+
+  .modal {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .form-row { grid-template-columns: 1fr; }
 }
 
 /* ── ANIMATIONS ──────────────────────────── */

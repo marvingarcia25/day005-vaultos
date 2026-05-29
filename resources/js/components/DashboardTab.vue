@@ -245,4 +245,34 @@ onMounted(async () => {
   font-size: 0.72rem;
   letter-spacing: 0.1em;
 }
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stat-value { font-size: 1.75rem; }
+
+  .dashboard-columns {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .occ-legend { flex-wrap: wrap; gap: 0.75rem; }
+
+  .payment-row {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 0.2rem 0.75rem;
+    padding: 0.75rem 0.85rem;
+  }
+
+  .pay-tenant { grid-column: 1; grid-row: 1; }
+  .pay-amount { grid-column: 2; grid-row: 1; }
+  .pay-method { grid-column: 1; grid-row: 2; }
+  .pay-date   { grid-column: 2; grid-row: 2; }
+
+  .renewal-row { padding: 0.75rem 0.85rem; }
+  .rev-value { font-size: 1.2rem; }
+}
 </style>

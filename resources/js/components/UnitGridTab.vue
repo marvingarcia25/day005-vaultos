@@ -414,4 +414,42 @@ onMounted(async () => {
   font-size: 0.72rem;
   letter-spacing: 0.1em;
 }
+
+@media (max-width: 768px) {
+  .unit-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+
+  .legend { flex-wrap: wrap; gap: 0.65rem; }
+
+  .filter-group { flex-wrap: wrap; }
+
+  /* Floor plan: horizontal scroll so plan stays intact */
+  .floor-plan {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.85rem;
+  }
+
+  .plan-row { flex-wrap: nowrap; min-width: max-content; }
+  .units-strip { flex-wrap: nowrap; }
+
+  .unit-cell {
+    height: 52px;
+    max-width: 64px;
+  }
+
+  .cell-sqft { display: none; }
+
+  .drawer-specs,
+  .tenant-info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .status-btns { flex-wrap: wrap; }
+
+  .drawer-body { padding: 0.85rem; }
+}
 </style>
