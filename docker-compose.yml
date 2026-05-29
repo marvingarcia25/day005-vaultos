@@ -18,6 +18,7 @@ services:
       DB_USERNAME: sa
       DB_PASSWORD: "VaultOS_Str0ng!"
       DB_TRUST_SERVER_CERTIFICATE: "true"
+      SESSION_DRIVER: file
     depends_on:
       db:
         condition: service_healthy
