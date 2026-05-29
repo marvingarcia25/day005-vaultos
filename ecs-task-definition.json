@@ -4,38 +4,26 @@
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "512",
   "memory": "1024",
-  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskRole",
+  "executionRoleArn": "arn:aws:iam::702147682981:role/ecsTaskExecutionRole",
   "containerDefinitions": [
     {
       "name": "app",
-      "image": "ACCOUNT_ID.dkr.ecr.ap-southeast-2.amazonaws.com/vaultos-app:latest",
+      "image": "702147682981.dkr.ecr.ap-southeast-2.amazonaws.com/vaultos-app:latest",
       "essential": true,
       "portMappings": [
-        {
-          "containerPort": 80,
-          "protocol": "tcp"
-        }
+        { "containerPort": 80, "protocol": "tcp" }
       ],
       "environment": [
-        { "name": "APP_NAME",       "value": "VaultOS" },
-        { "name": "APP_ENV",        "value": "production" },
-        { "name": "APP_DEBUG",      "value": "false" },
-        { "name": "DB_CONNECTION",  "value": "sqlsrv" },
-        { "name": "DB_HOST",        "value": "127.0.0.1" },
-        { "name": "DB_PORT",        "value": "1433" },
-        { "name": "DB_DATABASE",    "value": "vaultos" },
-        { "name": "DB_USERNAME",    "value": "sa" }
-      ],
-      "secrets": [
-        {
-          "name": "APP_KEY",
-          "valueFrom": "arn:aws:ssm:ap-southeast-2:ACCOUNT_ID:parameter/vaultos/app-key"
-        },
-        {
-          "name": "DB_PASSWORD",
-          "valueFrom": "arn:aws:ssm:ap-southeast-2:ACCOUNT_ID:parameter/vaultos/db-password"
-        }
+        { "name": "APP_NAME",      "value": "VaultOS" },
+        { "name": "APP_ENV",       "value": "production" },
+        { "name": "APP_DEBUG",     "value": "false" },
+        { "name": "APP_KEY",       "value": "PLACEHOLDER_APP_KEY" },
+        { "name": "DB_CONNECTION", "value": "sqlsrv" },
+        { "name": "DB_HOST",       "value": "127.0.0.1" },
+        { "name": "DB_PORT",       "value": "1433" },
+        { "name": "DB_DATABASE",   "value": "vaultos" },
+        { "name": "DB_USERNAME",   "value": "sa" },
+        { "name": "DB_PASSWORD",   "value": "PLACEHOLDER_DB_PASSWORD" }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
@@ -46,10 +34,7 @@
         }
       },
       "dependsOn": [
-        {
-          "containerName": "db",
-          "condition": "HEALTHY"
-        }
+        { "containerName": "db", "condition": "HEALTHY" }
       ]
     },
     {
@@ -57,25 +42,17 @@
       "image": "mcr.microsoft.com/mssql/server:2022-latest",
       "essential": true,
       "portMappings": [
-        {
-          "containerPort": 1433,
-          "protocol": "tcp"
-        }
+        { "containerPort": 1433, "protocol": "tcp" }
       ],
       "environment": [
-        { "name": "ACCEPT_EULA", "value": "Y" },
-        { "name": "MSSQL_PID",  "value": "Express" }
-      ],
-      "secrets": [
-        {
-          "name": "SA_PASSWORD",
-          "valueFrom": "arn:aws:ssm:ap-southeast-2:ACCOUNT_ID:parameter/vaultos/db-password"
-        }
+        { "name": "ACCEPT_EULA",  "value": "Y" },
+        { "name": "MSSQL_PID",   "value": "Express" },
+        { "name": "SA_PASSWORD",  "value": "PLACEHOLDER_DB_PASSWORD" }
       ],
       "healthCheck": {
         "command": [
           "CMD-SHELL",
-          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P $SA_PASSWORD -Q 'SELECT 1' -No || exit 1"
+          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'VaultOS_Str0ng!' -Q 'SELECT 1' -No || exit 1"
         ],
         "interval": 10,
         "timeout": 5,

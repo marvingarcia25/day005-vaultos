@@ -8,7 +8,7 @@ on:
 env:
   AWS_REGION:       ap-southeast-2
   ECR_REPOSITORY:   vaultos-app
-  ECS_CLUSTER:      vaultos-cluster
+  ECS_CLUSTER:      vaultos
   ECS_SERVICE:      vaultos-service
   TASK_DEFINITION:  ecs-task-definition.json
   CONTAINER_NAME:   app
@@ -76,6 +76,13 @@ jobs:
           aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region:            ${{ env.AWS_REGION }}
+
+      - name: Inject secrets into task definition
+        run: |
+          sed -i \
+            -e 's|PLACEHOLDER_APP_KEY|${{ secrets.APP_KEY }}|g' \
+            -e 's|PLACEHOLDER_DB_PASSWORD|${{ secrets.DB_PASSWORD }}|g' \
+            ${{ env.TASK_DEFINITION }}
 
       - name: Render updated ECS task definition with new image
         id: render-task-def
