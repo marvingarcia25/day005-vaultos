@@ -3,54 +3,74 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Payment;
-use App\Models\Tenant;
-use App\Models\Unit;
-use Illuminate\Support\Carbon;
+use App\Services\DataStore;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $totalUnits     = Unit::count();
-        $occupiedUnits  = Unit::where('status', 'occupied')->count();
-        $reservedUnits  = Unit::where('status', 'reserved')->count();
-        $availableUnits = Unit::where('status', 'available')->count();
-        $occupancyRate  = $totalUnits > 0 ? round(($occupiedUnits / $totalUnits) * 100, 1) : 0;
+        $data     = DataStore::load();
+        $units    = $data['units'];
+        $tenants  = $data['tenants'];
+        $payments = $data['payments'];
 
-        $now = Carbon::now();
+        $totalUnits     = count($units);
+        $occupiedUnits  = count(array_filter($units, fn($u) => $u['status'] === 'occupied'));
+        $reservedUnits  = count(array_filter($units, fn($u) => $u['status'] === 'reserved'));
+        $availableUnits = count(array_filter($units, fn($u) => $u['status'] === 'available'));
+        $occupancyRate  = $totalUnits > 0 ? round($occupiedUnits / $totalUnits * 100, 1) : 0;
 
-        $monthlyRevenue = Payment::whereMonth('payment_date', $now->month)
-            ->whereYear('payment_date', $now->year)
-            ->sum('amount');
+        $today     = date('Y-m-d');
+        $thisMonth = (int) date('m');
+        $thisYear  = (int) date('Y');
+        $in30Days  = date('Y-m-d', strtotime('+30 days'));
 
-        $annualRevenue = Payment::whereYear('payment_date', $now->year)->sum('amount');
+        $monthlyRevenue = array_sum(array_map(
+            fn($p) => (float) $p['amount'],
+            array_filter($payments, fn($p) =>
+                (int) date('m', strtotime($p['payment_date'])) === $thisMonth &&
+                (int) date('Y', strtotime($p['payment_date'])) === $thisYear
+            )
+        ));
 
-        $upcomingRenewals = Tenant::with('unit')
-            ->where('status', 'active')
-            ->whereNotNull('lease_end')
-            ->whereBetween('lease_end', [$now, $now->copy()->addDays(30)])
-            ->orderBy('lease_end')
-            ->get()
-            ->map(fn($tenant) => [
-                'id'        => $tenant->id,
-                'name'      => $tenant->full_name,
-                'unit'      => $tenant->unit?->unit_number,
-                'lease_end' => $tenant->lease_end->format('Y-m-d'),
-                'days_left' => (int) $now->diffInDays($tenant->lease_end, false),
-            ]);
+        $annualRevenue = array_sum(array_map(
+            fn($p) => (float) $p['amount'],
+            array_filter($payments, fn($p) =>
+                (int) date('Y', strtotime($p['payment_date'])) === $thisYear
+            )
+        ));
 
-        $recentPayments = Payment::with('tenant')
-            ->orderByDesc('payment_date')
-            ->limit(5)
-            ->get()
-            ->map(fn($payment) => [
-                'id'     => $payment->id,
-                'tenant' => $payment->tenant?->full_name,
-                'amount' => (float) $payment->amount,
-                'date'   => $payment->payment_date->format('Y-m-d'),
-                'method' => $payment->method,
-            ]);
+        $activeTenants = count(array_filter($tenants, fn($t) => $t['status'] === 'active'));
+
+        $unitMap = array_column($units, null, 'id');
+
+        $renewals = array_values(array_filter($tenants, fn($t) =>
+            $t['status'] === 'active' &&
+            $t['lease_end'] !== null &&
+            $t['lease_end'] >= $today &&
+            $t['lease_end'] <= $in30Days
+        ));
+        usort($renewals, fn($a, $b) => strcmp($a['lease_end'], $b['lease_end']));
+        $upcomingRenewals = array_map(fn($t) => [
+            'id'        => $t['id'],
+            'name'      => $t['first_name'] . ' ' . $t['last_name'],
+            'unit'      => $unitMap[$t['unit_id']]['unit_number'] ?? null,
+            'lease_end' => $t['lease_end'],
+            'days_left' => (int) round((strtotime($t['lease_end']) - strtotime($today)) / 86400),
+        ], $renewals);
+
+        $tenantMap     = array_column($tenants, null, 'id');
+        $sortedPayments = $payments;
+        usort($sortedPayments, fn($a, $b) => strcmp($b['payment_date'], $a['payment_date']));
+        $recentPayments = array_map(fn($p) => [
+            'id'     => $p['id'],
+            'tenant' => isset($tenantMap[$p['tenant_id']])
+                ? $tenantMap[$p['tenant_id']]['first_name'] . ' ' . $tenantMap[$p['tenant_id']]['last_name']
+                : null,
+            'amount' => (float) $p['amount'],
+            'date'   => $p['payment_date'],
+            'method' => $p['method'],
+        ], array_slice($sortedPayments, 0, 5));
 
         return response()->json([
             'stats' => [
@@ -59,9 +79,9 @@ class DashboardController extends Controller
                 'reserved_units'  => $reservedUnits,
                 'available_units' => $availableUnits,
                 'occupancy_rate'  => $occupancyRate,
-                'monthly_revenue' => (float) $monthlyRevenue,
-                'annual_revenue'  => (float) $annualRevenue,
-                'active_tenants'  => Tenant::where('status', 'active')->count(),
+                'monthly_revenue' => $monthlyRevenue,
+                'annual_revenue'  => $annualRevenue,
+                'active_tenants'  => $activeTenants,
             ],
             'upcoming_renewals' => $upcomingRenewals,
             'recent_payments'   => $recentPayments,

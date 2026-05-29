@@ -3,35 +3,62 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Unit;
+use App\Services\DataStore;
 use Illuminate\Http\Request;
 
 class UnitsController extends Controller
 {
     public function index()
     {
-        $units = Unit::with('tenant:id,first_name,last_name,email,phone,lease_start,lease_end,unit_id')
-            ->orderBy('row_label')
-            ->orderBy('unit_number')
-            ->get();
+        $data      = DataStore::load();
+        $tenantMap = array_column($data['tenants'], null, 'unit_id');
 
-        return response()->json($units);
+        $units = array_map(fn($u) => array_merge($u, ['tenant' => $tenantMap[$u['id']] ?? null]), $data['units']);
+        usort($units, fn($a, $b) => strcmp($a['unit_number'], $b['unit_number']));
+
+        return response()->json(array_values($units));
     }
 
-    public function show(Unit $unit)
+    public function show(int $id)
     {
-        return response()->json($unit->load('tenant'));
+        $data      = DataStore::load();
+        $unit      = $this->find($data['units'], $id);
+        $tenantMap = array_column($data['tenants'], null, 'unit_id');
+
+        return response()->json(array_merge($unit, ['tenant' => $tenantMap[$unit['id']] ?? null]));
     }
 
-    public function update(Request $request, Unit $unit)
+    public function update(Request $request, int $id)
     {
         $validated = $request->validate([
             'status' => 'sometimes|in:available,occupied,reserved',
             'notes'  => 'sometimes|nullable|string',
         ]);
 
-        $unit->update($validated);
+        $data  = DataStore::load();
+        $index = $this->indexOf($data['units'], $id);
+        $data['units'][$index] = array_merge($data['units'][$index], $validated);
+        DataStore::save($data);
 
-        return response()->json($unit->fresh('tenant'));
+        $unit      = $data['units'][$index];
+        $tenantMap = array_column($data['tenants'], null, 'unit_id');
+
+        return response()->json(array_merge($unit, ['tenant' => $tenantMap[$unit['id']] ?? null]));
+    }
+
+    private function find(array $items, int $id): array
+    {
+        foreach ($items as $item) {
+            if ($item['id'] === $id) return $item;
+        }
+        abort(404);
+    }
+
+    private function indexOf(array $items, int $id): int
+    {
+        foreach ($items as $i => $item) {
+            if ($item['id'] === $id) return $i;
+        }
+        abort(404);
     }
 }

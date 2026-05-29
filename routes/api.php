@@ -7,7 +7,15 @@ use App\Http\Controllers\Api\TenantsController;
 use App\Http\Controllers\Api\PaymentsController;
 
 Route::get('/dashboard', [DashboardController::class, 'index']);
-Route::apiResource('units', UnitsController::class)->only(['index', 'show', 'update']);
-Route::apiResource('tenants', TenantsController::class)->only(['index', 'show', 'store', 'update']);
-Route::post('/tenants/{tenant}/payments', [PaymentsController::class, 'store']);
-Route::get('/tenants/{tenant}/payments', [PaymentsController::class, 'index']);
+
+Route::get('/units',      [UnitsController::class, 'index']);
+Route::get('/units/{id}', [UnitsController::class, 'show']);
+Route::put('/units/{id}', [UnitsController::class, 'update']);
+
+Route::get('/tenants',      [TenantsController::class, 'index']);
+Route::get('/tenants/{id}', [TenantsController::class, 'show']);
+Route::post('/tenants',     [TenantsController::class, 'store']);
+Route::put('/tenants/{id}', [TenantsController::class, 'update']);
+
+Route::get('/tenants/{id}/payments',  [PaymentsController::class, 'index']);
+Route::post('/tenants/{id}/payments', [PaymentsController::class, 'store']);
