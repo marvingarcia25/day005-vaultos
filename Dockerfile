@@ -10,7 +10,7 @@ COPY package.json ./
 COPY vite.config.js ./
 COPY resources/js ./resources/js
 
-RUN npm install && npm run build
+RUN mkdir -p public && npm install && npm run build
 
 
 # =============================================================================
