@@ -1,0 +1,13 @@
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/vendor
+.env
+*.key
+Homestead.json
+Homestead.yaml
+.vagrant
+.phpunit.result.cache
+bootstrap/cache/*.php
+storage/*.key

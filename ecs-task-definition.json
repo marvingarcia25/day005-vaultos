@@ -1,0 +1,95 @@
+{
+  "family": "vaultos",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "app",
+      "image": "ACCOUNT_ID.dkr.ecr.ap-southeast-2.amazonaws.com/vaultos-app:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        { "name": "APP_NAME",       "value": "VaultOS" },
+        { "name": "APP_ENV",        "value": "production" },
+        { "name": "APP_DEBUG",      "value": "false" },
+        { "name": "DB_CONNECTION",  "value": "sqlsrv" },
+        { "name": "DB_HOST",        "value": "127.0.0.1" },
+        { "name": "DB_PORT",        "value": "1433" },
+        { "name": "DB_DATABASE",    "value": "vaultos" },
+        { "name": "DB_USERNAME",    "value": "sa" }
+      ],
+      "secrets": [
+        {
+          "name": "APP_KEY",
+          "valueFrom": "arn:aws:ssm:ap-southeast-2:ACCOUNT_ID:parameter/vaultos/app-key"
+        },
+        {
+          "name": "DB_PASSWORD",
+          "valueFrom": "arn:aws:ssm:ap-southeast-2:ACCOUNT_ID:parameter/vaultos/db-password"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group":         "/ecs/vaultos",
+          "awslogs-region":        "ap-southeast-2",
+          "awslogs-stream-prefix": "app"
+        }
+      },
+      "dependsOn": [
+        {
+          "containerName": "db",
+          "condition": "HEALTHY"
+        }
+      ]
+    },
+    {
+      "name": "db",
+      "image": "mcr.microsoft.com/mssql/server:2022-latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 1433,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        { "name": "ACCEPT_EULA", "value": "Y" },
+        { "name": "MSSQL_PID",  "value": "Express" }
+      ],
+      "secrets": [
+        {
+          "name": "SA_PASSWORD",
+          "valueFrom": "arn:aws:ssm:ap-southeast-2:ACCOUNT_ID:parameter/vaultos/db-password"
+        }
+      ],
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P $SA_PASSWORD -Q 'SELECT 1' -No || exit 1"
+        ],
+        "interval": 10,
+        "timeout": 5,
+        "retries": 10,
+        "startPeriod": 30
+      },
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group":         "/ecs/vaultos",
+          "awslogs-region":        "ap-southeast-2",
+          "awslogs-stream-prefix": "db"
+        }
+      }
+    }
+  ]
+}

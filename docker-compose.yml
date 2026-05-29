@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      APP_NAME: VaultOS
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_KEY: base64:REPLACEME
+      APP_URL: http://localhost:8080
+      DB_CONNECTION: sqlsrv
+      DB_HOST: db
+      DB_PORT: 1433
+      DB_DATABASE: vaultos
+      DB_USERNAME: sa
+      DB_PASSWORD: "VaultOS_Str0ng!"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - vaultos
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "VaultOS_Str0ng!"
+      MSSQL_PID: Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/opt/mssql-tools18/bin/sqlcmd",
+          "-S", "localhost",
+          "-U", "sa",
+          "-P", "VaultOS_Str0ng!",
+          "-Q", "SELECT 1",
+          "-No"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - vaultos
+
+networks:
+  vaultos:
+    driver: bridge
+
+volumes:
+  mssql_data:
