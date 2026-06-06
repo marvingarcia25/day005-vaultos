@@ -1,91 +1,38 @@
-# VaultOS — Self-Storage Management App
+# day5_storman — VaultOS
 
-Laravel 11 + Vue 3 + MSSQL, containerised with Docker and deployed on AWS ECS Fargate.
+A self-storage management dashboard: units, tenants, and payments in one place.
 
----
+VaultOS is a small operations app for a storage facility. See every unit and whether it's occupied, manage the tenants renting them, record payments, and get the whole picture on a dashboard. Built as a Laravel API behind a Vue SPA, containerised, and wired to deploy on AWS.
 
-## Prerequisites
+## What it does
 
-- Docker and Docker Compose
-- AWS CLI configured with an IAM user that has ECR and ECS permissions
-- GitHub repository secrets (see below)
+- **Units** — grid of every unit with occupancy status
+- **Tenants** — who's renting what
+- **Payments** — record and track payments
+- **Dashboard** — occupancy and revenue at a glance
 
----
+## Stack
 
-## Local Development
+- Laravel 11 (PHP 8.2) REST API
+- Vue 3 SPA
+- SQL Server (MSSQL)
+- Docker + Docker Compose
+- GitHub Actions → AWS ECR / ECS Fargate
 
-1. Copy `.env.example` to `.env` and set `APP_KEY` (or run `php artisan key:generate` after the container is up).
+## Running it (Docker)
 
-2. Start the stack:
-
-   ```bash
-   docker-compose up --build
-   ```
-
-3. Run migrations and seeders:
-
-   ```bash
-   docker-compose exec app php artisan migrate --seed
-   ```
-
-4. Open http://localhost:8080 in your browser.
-
----
-
-## AWS Setup (one-time)
-
-### 1. Create the ECR repository
-
-```bash
-aws ecr create-repository \
-  --repository-name vaultos-app \
-  --region ap-southeast-2
+```
+cp .env.example .env          # set APP_KEY, or run php artisan key:generate in the container
+docker-compose up --build
+docker-compose exec app php artisan migrate --seed
 ```
 
-### 2. Store secrets in SSM Parameter Store
+Open http://localhost:8080.
 
-```bash
-aws ssm put-parameter --name /vaultos/app-key     --type SecureString --value "base64:YOUR_APP_KEY"
-aws ssm put-parameter --name /vaultos/db-password --type SecureString --value "YOUR_STRONG_DB_PASSWORD"
-```
+## Deploy
 
-### 3. Create the ECS cluster
-
-```bash
-aws ecs create-cluster --cluster-name vaultos-cluster --region ap-southeast-2
-```
-
-### 4. Register the task definition
-
-Replace `ACCOUNT_ID` in `ecs-task-definition.json` with your AWS account ID, then:
-
-```bash
-aws ecs register-task-definition \
-  --cli-input-json file://ecs-task-definition.json \
-  --region ap-southeast-2
-```
-
-### 5. Create the ECS service
-
-Create a Fargate service attached to an Application Load Balancer (ALB) that forwards traffic on port 80 to the `app` container. Use the AWS Console or CLI.
-
-### 6. Attach an ALB and configure a security group
-
-The ALB listener should forward HTTP:80 to the ECS target group. The ECS task security group must allow inbound traffic from the ALB security group on port 80.
+Pushes to `master` build the image, push it to ECR, and roll out a rolling update to ECS Fargate. One-time AWS setup (ECR repo, SSM secrets, ECS cluster + ALB) lives in `ecs-task-definition.json` and `.github/workflows/deploy.yml`. Requires GitHub secrets `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
 
 ---
 
-## GitHub Actions Secrets Required
-
-| Secret                  | Description                              |
-|-------------------------|------------------------------------------|
-| `AWS_ACCESS_KEY_ID`     | IAM access key with ECR + ECS permissions |
-| `AWS_SECRET_ACCESS_KEY` | Corresponding IAM secret key             |
-
-Pushes to `master` automatically build the Docker image, push it to ECR, and deploy a rolling update to the ECS service.
-
----
-
-## Deployed URL
-
-https://YOUR-ALB-DNS-NAME.ap-southeast-2.elb.amazonaws.com
+Day 5 of building a small thing every day.
